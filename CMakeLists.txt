@@ -3,9 +3,6 @@ project(BSTMap)
 
 add_executable(BSTMap
     main.cpp
-    BSTMap.cpp
-    BSTree.cpp
-    MapNode.cpp
 )
 
 target_include_directories(BSTMap
