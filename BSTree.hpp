@@ -57,19 +57,22 @@ template <typename Key, typename Value>
 void BSTree<Key, Value>::insert(const Key& key, const Value& value)
 {
     MapNode<Key, Value>* newNode = new MapNode<Key, Value>(key, value);
-    treeNodes.push_back(newNode);
     MapNode<Key, Value>* node = rootNode;
     MapNode<Key, Value>* lastNode = nullptr;
 
     while(node){
-        lastNode = node;
-        if(newNode->key < node->key){
-            node = node->left;
-        }
-        else{
-            node = node->right;
-        }
+    lastNode = node;
+    if(newNode->key < node->key){
+        node = node->left;
     }
+    else if(newNode->key > node->key){
+        node = node->right;
+    }
+    else {
+        delete newNode;
+        return;
+    }
+}
     newNode->parent = lastNode;
     if(!lastNode){
         rootNode = newNode;
