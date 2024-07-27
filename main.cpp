@@ -1,4 +1,3 @@
-#include "BSTMap.hpp"
 #include "BSTree.hpp"
 #include "VecMap.hpp"
 #include "Benchmark.hpp"
@@ -40,7 +39,7 @@ int main(int argc, char *argv[]){
     } catch (const std::runtime_error& e) {
         std::cerr << "Caught a runtime error: " << e.what() << '\n';
     }
-
+    
     std::cout << "BSTreeMap - ";
     try {
         benchmarkSearch(BSTreeMap, keysSet); 

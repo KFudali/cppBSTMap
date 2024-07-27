@@ -12,11 +12,11 @@ using namespace std;
 using namespace std::chrono;
 
 template<typename MapType>
-void benchmarkInsert(MapType& map, const vector<pair<int, int>>& data) {
+void benchmarkInsert(MapType& map, const std::vector<std::pair<typename MapType::key_type, typename MapType::mapped_type>>& data) {
     auto start = high_resolution_clock::now();
 
-    for (const auto pair : data) {
-        map.insert(pair.first, pair.second);
+    for (const auto& pair : data) {
+        map.insert(pair);
     }
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - start).count();
@@ -24,37 +24,12 @@ void benchmarkInsert(MapType& map, const vector<pair<int, int>>& data) {
 }
 
 template<typename MapType>
-void benchmarkSearch(MapType& map, const vector<int>& keys) {
-    std::vector<int> values;
+void benchmarkSearch(MapType& map, const std::vector<typename MapType::key_type>& keys) {
     auto start = high_resolution_clock::now();
-    for (const int key : keys) {
-        values.push_back(map.search(key));
+    for (const typename MapType::key_type& key : keys) {
+        auto val = map.at(key);
     }
     auto end = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(end - start).count();
     cout << "Search time: " << duration << " microseconds" << endl;
-}
-
-template<>
-void benchmarkSearch(std::map<int, int>& map, const vector<int>& keys) {
-    std::vector<int> values;
-    auto start = high_resolution_clock::now();
-    for (const int key : keys) {
-        values.push_back(map[key]);
-    }
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(end - start).count();
-    cout << "Search time: " << duration << " microseconds" << endl;
-}
-
-template<>
-void benchmarkInsert(std::map<int, int>& map, const vector<pair<int, int>>& data) {
-    auto start = high_resolution_clock::now();
-
-    for (const auto pair : data) {
-        map.insert(pair);
-    }
-    auto end = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(end - start).count();
-    cout << "Insert time: " << duration << " microseconds" << endl;
 }

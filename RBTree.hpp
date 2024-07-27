@@ -9,25 +9,9 @@
 template <typename Key, typename Value>
 class BSTree 
 {
-
     MapNode<Key, Value>* rootNode;
-    size_t mapSize;
-
-    void removeNode( MapNode<Key, Value>* node );
-    void shiftNodes( MapNode<Key, Value>* u, MapNode<Key, Value>* v);
-
-    MapNode<Key, Value>* searchNode( const Key& key ) const;
-
-    MapNode<Key, Value>* minNode (MapNode<Key, Value>* node) const;
-    MapNode<Key, Value>* maxNode (MapNode<Key, Value>* node) const;
-
-    MapNode<Key, Value>* successor (MapNode<Key, Value>* node) const;
-    MapNode<Key, Value>* predecessor (MapNode<Key, Value>* node) const;
 
 public:
-    typedef Key key_type;
-    typedef Value mapped_type;
-
     BSTree();
     ~BSTree();
 
@@ -35,13 +19,18 @@ public:
     BSTree operator=(const BSTree &) = delete;
 
     // void insert(std::pair<Key, Value> aPair);
-    void erase(const Key& key);
-    void insert(const Key& key, const Value& value);
-    void insert(const std::pair<Key, Value>& pair);
-    Value& at(const Key& key);
-    Value& operator[](const Key& key);
+    void  insert( const Key& key, const Value& value );
+    MapNode<Key, Value>* searchNode( const Key& key ) const;
+    Value search( const Key& key ) const;
 
-    inline size_t size() const {return mapSize;};
+    void removeNode( MapNode<Key, Value>* node );
+    void shiftNodes(MapNode<Key, Value>* u, MapNode<Key, Value>* v);
+
+    MapNode<Key, Value>* minNode (MapNode<Key, Value>* node) const;
+    MapNode<Key, Value>* maxNode (MapNode<Key, Value>* node) const;
+
+    MapNode<Key, Value>* successor (MapNode<Key, Value>* node) const;
+    MapNode<Key, Value>* predecessor (MapNode<Key, Value>* node) const;
 
 };
 
@@ -83,7 +72,7 @@ void BSTree<Key, Value>::insert(const Key& key, const Value& value)
         delete newNode;
         return;
     }
-    }
+}
     newNode->parent = lastNode;
     if(!lastNode){
         rootNode = newNode;
@@ -92,13 +81,6 @@ void BSTree<Key, Value>::insert(const Key& key, const Value& value)
     }else{
         lastNode->right = newNode;
     }
-    mapSize++;
-}
-
-template <typename Key, typename Value>
-void BSTree<Key, Value>::insert(const std::pair<Key, Value>& pair)
-{
-    insert(pair.first, pair.second);
 }
 
 template <typename Key, typename Value>
@@ -116,33 +98,12 @@ MapNode<Key, Value>* BSTree<Key, Value>::searchNode(const Key& key) const
 }
 
 template <typename Key, typename Value>
-Value& BSTree<Key, Value>::at(const Key& key){
+Value BSTree<Key, Value>::search(const Key& key) const {
     MapNode<Key, Value>* node = searchNode(key);
     if (node) {
         return node->value;
     }
     throw std::runtime_error("Key not found");
-}
-
-template <typename Key, typename Value>
-Value& BSTree<Key, Value>::operator[](const Key& key) {
-    MapNode<Key, Value>* node = searchNode(key);
-    if (node) {
-        return node->value;
-    } else {
-        Value val();
-        insert(key, val);
-        return val;
-    }
-}
-
-template <typename Key, typename Value>
-void BSTree<Key, Value>::erase(const Key& key){
-    MapNode<Key, Value> nodeToDelete = searchNode(key);
-    if(nodeToDelete){
-        remove(nodeToDelete);
-        mapSize--;
-    }
 }
 
 template <typename Key, typename Value>
