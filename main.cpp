@@ -1,26 +1,27 @@
 #include "BSTree.hpp"
 #include "VecMap.hpp"
 #include "Benchmark.hpp"
-#include "iostream"
-#include <map>
+#include "RandData.hpp"
 
-int randRange(int min, int max) {
-    return min + rand() % (max - min + 1);
-}
+#include <iostream>
+#include <map>
+#include <string>
 
 int main(int argc, char *argv[]){
     
     BSTree<int, int> BSTreeMap;
     VecMap<int, int> vecMap;
-    std::map<int,int> map;
+    std::map<int, int> map;
 
     size_t setSize = 100000;
-    vector<pair<int, int>> dataSet(setSize);
-    vector<int> keysSet(setSize);
+    std::vector<int> keysSet(setSize);
+    std::vector<std::pair<int, int>> dataSet(setSize);
+
+    RandData::init();
 
     for (int i = 0; i < setSize; ++i) {
-        int key = randRange(1, setSize);
-        int value = randRange(1, setSize);
+        int key   = RandData::randInt(1,setSize);
+        int value = RandData::randInt(1, setSize);
         dataSet[i] = {key, value};
         keysSet[i] = key;
 

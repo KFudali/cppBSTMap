@@ -7,16 +7,16 @@
 // Reference https://en.wikipedia.org/wiki/Binary_search_tree
 
 template <typename Key, typename Value>
-class BSTree 
+class RBTree 
 {
     MapNode<Key, Value>* rootNode;
 
 public:
-    BSTree();
-    ~BSTree();
+    RBTree();
+    ~RBTree();
 
-    BSTree(const BSTree &) = delete;
-    BSTree operator=(const BSTree &) = delete;
+    RBTree(const RBTree &) = delete;
+    RBTree operator=(const RBTree &) = delete;
 
     // void insert(std::pair<Key, Value> aPair);
     void  insert( const Key& key, const Value& value );
@@ -35,12 +35,12 @@ public:
 };
 
 template <typename Key, typename Value>
-BSTree<Key, Value>::BSTree(){
+RBTree<Key, Value>::RBTree(){
     rootNode = nullptr;
 }
 
 template <typename Key, typename Value>
-BSTree<Key, Value>::~BSTree(){
+RBTree<Key, Value>::~RBTree(){
     std::vector<MapNode<Key, Value>*> nodes;
     if (rootNode) nodes.push_back(rootNode);
 
@@ -54,7 +54,7 @@ BSTree<Key, Value>::~BSTree(){
 }
 
 template <typename Key, typename Value>
-void BSTree<Key, Value>::insert(const Key& key, const Value& value)
+void RBTree<Key, Value>::insert(const Key& key, const Value& value)
 {
     MapNode<Key, Value>* newNode = new MapNode<Key, Value>(key, value);
     MapNode<Key, Value>* node = rootNode;
@@ -84,7 +84,7 @@ void BSTree<Key, Value>::insert(const Key& key, const Value& value)
 }
 
 template <typename Key, typename Value>
-MapNode<Key, Value>* BSTree<Key, Value>::searchNode(const Key& key) const
+MapNode<Key, Value>* RBTree<Key, Value>::searchNode(const Key& key) const
 {
     MapNode<Key, Value>* node = rootNode;
     while ( node && (node->key != key)){
@@ -98,7 +98,7 @@ MapNode<Key, Value>* BSTree<Key, Value>::searchNode(const Key& key) const
 }
 
 template <typename Key, typename Value>
-Value BSTree<Key, Value>::search(const Key& key) const {
+Value RBTree<Key, Value>::search(const Key& key) const {
     MapNode<Key, Value>* node = searchNode(key);
     if (node) {
         return node->value;
@@ -107,7 +107,7 @@ Value BSTree<Key, Value>::search(const Key& key) const {
 }
 
 template <typename Key, typename Value>
-void BSTree<Key, Value>::shiftNodes( MapNode<Key, Value>* u,  MapNode<Key, Value>* v)
+void RBTree<Key, Value>::shiftNodes( MapNode<Key, Value>* u,  MapNode<Key, Value>* v)
 {
     if(!u->parent){
         rootNode = v;
@@ -122,7 +122,7 @@ void BSTree<Key, Value>::shiftNodes( MapNode<Key, Value>* u,  MapNode<Key, Value
 }
 
 template <typename Key, typename Value>
-MapNode<Key, Value>* BSTree<Key, Value>::maxNode(MapNode<Key, Value>* node) const
+MapNode<Key, Value>* RBTree<Key, Value>::maxNode(MapNode<Key, Value>* node) const
 {
     while(node->right){
         node = node->right;
@@ -131,7 +131,7 @@ MapNode<Key, Value>* BSTree<Key, Value>::maxNode(MapNode<Key, Value>* node) cons
 }
 
 template <typename Key, typename Value>
-MapNode<Key, Value>* BSTree<Key, Value>::minNode(MapNode<Key, Value>* node) const
+MapNode<Key, Value>* RBTree<Key, Value>::minNode(MapNode<Key, Value>* node) const
 {
     while(node->left){
         node = node->left;
@@ -140,7 +140,7 @@ MapNode<Key, Value>* BSTree<Key, Value>::minNode(MapNode<Key, Value>* node) cons
 }
 
 template <typename Key, typename Value>
-MapNode<Key, Value>* BSTree<Key, Value>::successor(MapNode<Key, Value>* node) const
+MapNode<Key, Value>* RBTree<Key, Value>::successor(MapNode<Key, Value>* node) const
 {
     MapNode<Key, Value>* successorNode;
     if (node->right) {
@@ -155,7 +155,7 @@ MapNode<Key, Value>* BSTree<Key, Value>::successor(MapNode<Key, Value>* node) co
 }
 
 template <typename Key, typename Value>
-MapNode<Key, Value>* BSTree<Key, Value>::predecessor(MapNode<Key, Value>* node) const
+MapNode<Key, Value>* RBTree<Key, Value>::predecessor(MapNode<Key, Value>* node) const
 {
     MapNode<Key, Value>* predecessorNode;
     if (node->left) {
@@ -170,7 +170,7 @@ MapNode<Key, Value>* BSTree<Key, Value>::predecessor(MapNode<Key, Value>* node) 
 }
 
 template <typename Key, typename Value>
-void BSTree<Key, Value>::removeNode(MapNode<Key, Value>* nodeToDelete) {
+void RBTree<Key, Value>::removeNode(MapNode<Key, Value>* nodeToDelete) {
     if (!nodeToDelete) {
         throw std::runtime_error("Node to delete is nullptr!");
     }
