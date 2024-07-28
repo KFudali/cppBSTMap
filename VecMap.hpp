@@ -6,9 +6,7 @@
 template<typename Key, typename Value>
 class VecMap {
 
-    std::vector<Key> keys;
-    std::vector<Value> values;
-
+    std::vector<std::pair<Key, Value>> pairs;
     public:
     
     typedef Key key_type;
@@ -20,36 +18,27 @@ class VecMap {
     VecMap(const VecMap &) = delete;
     VecMap operator=(const VecMap &) = delete;
 
-    // void insert(std::pair<Key, Value> aPair);
     void erase(const Key& key);
-    void insert(const Key& key, const Value& value);
     void insert(const std::pair<Key, Value>& pair);
     Value& at( const Key& key);
     Value& operator[](const Key& key);
 
-    inline size_t size(){return kesy.size();};
+    inline size_t size(){return pairs.size();};
 };
 
 template<typename Key, typename Value>
-void VecMap<Key, Value>::insert(const Key & key, const Value & value) {
-    const auto it = std::find(keys.begin(), keys.end(), key);
-    if (it == keys.end()) {
-        keys.push_back(key);
-        values.push_back(value);
+void VecMap<Key, Value>::insert(const std::pair<Key, Value>& pair) {
+    auto it = std::find_if(pairs.begin(), pairs.end(), [pair](const auto& mapPair){ return mapPair.first == pair.first; });
+    if (it == pairs.end()) {
+        pairs.push_back(pair);
     }
 }
 
 template<typename Key, typename Value>
-void VecMap<Key, Value>::insert(const std::pair<Key, Value>& pair)
-{
-    insert(pair.first, pair.second);
-}
-
-template<typename Key, typename Value>
 Value& VecMap<Key, Value>::at(const Key & key) {
-    for (size_t i = 0; i < keys.size(); i++) {
-        if (keys[i] == key) {
-            return values[i];
+    for (size_t i = 0; i <  pairs.size(); i++) {
+        if (pairs[i].first == key) {
+            return  pairs[i].second;
         }
     }
     throw std::runtime_error("Key not found");
@@ -58,10 +47,9 @@ Value& VecMap<Key, Value>::at(const Key & key) {
 template<typename Key, typename Value>
 void VecMap<Key, Value>::erase(const Key & key)
 {
-    for (size_t i = 0; i < keys.size(); ++i) {
-        if (keys[i] == key) {
-            keys.erase(keys.begin() + i);
-            values.erase(values.begin() + i);
+    for (size_t i = 0; i < pairs.size(); ++i) {
+        if (pairs[i].first == key) {
+            pairs.erase(keys.begin() + i);
             return; 
         }
     }
@@ -69,12 +57,11 @@ void VecMap<Key, Value>::erase(const Key & key)
 
 template<typename Key, typename Value>
 Value& VecMap<Key, Value>::operator[](const Key& key) {
-    for (size_t i = 0; i < key.size(); ++i) {
-        if (keys[i] == key) {
-            return values[i];
+    for (size_t i = 0; i < pairs.size(); ++i) {
+        if (pairs[i].first == key) {
+            return pairs[i].second;
         }
     }
-    keys.push_back(key);
-    values.push_back(Value());
-    return values.back();
+    insert(std::pair<Key, Value> pair(key, Value()));
+    return pairs.back().second;
 }

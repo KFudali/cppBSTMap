@@ -29,15 +29,15 @@ public:
     typedef Value mapped_type;
 
     BSTree();
-    ~BSTree();
+    virtual ~BSTree();
 
     BSTree(const BSTree &) = delete;
     BSTree operator=(const BSTree &) = delete;
 
     // void insert(std::pair<Key, Value> aPair);
-    void erase(const Key& key);
-    void insert(const Key& key, const Value& value);
-    void insert(const std::pair<Key, Value>& pair);
+    virtual void erase(const Key& key);
+    virtual void insert(const std::pair<Key, Value>& pair);
+
     Value& at(const Key& key);
     Value& operator[](const Key& key);
 
@@ -65,12 +65,12 @@ BSTree<Key, Value>::~BSTree(){
 }
 
 template <typename Key, typename Value>
-void BSTree<Key, Value>::insert(const Key& key, const Value& value)
+void BSTree<Key, Value>::insert(const std::pair<Key, Value>& pair)
 {
-    MapNode<Key, Value>* newNode = new MapNode<Key, Value>(key, value);
+    MapNode<Key, Value>* newNode = new MapNode<Key, Value>(pair);
     MapNode<Key, Value>* node = rootNode;
     MapNode<Key, Value>* lastNode = nullptr;
-
+    const Key& key = pair.first;
     while(node){
     lastNode = node;
     if(newNode->key < node->key){
@@ -93,12 +93,6 @@ void BSTree<Key, Value>::insert(const Key& key, const Value& value)
         lastNode->right = newNode;
     }
     mapSize++;
-}
-
-template <typename Key, typename Value>
-void BSTree<Key, Value>::insert(const std::pair<Key, Value>& pair)
-{
-    insert(pair.first, pair.second);
 }
 
 template <typename Key, typename Value>
@@ -138,9 +132,9 @@ Value& BSTree<Key, Value>::operator[](const Key& key) {
 
 template <typename Key, typename Value>
 void BSTree<Key, Value>::erase(const Key& key){
-    MapNode<Key, Value> nodeToDelete = searchNode(key);
+    MapNode<Key, Value>* nodeToDelete = searchNode(key);
     if(nodeToDelete){
-        remove(nodeToDelete);
+        removeNode(nodeToDelete);
         mapSize--;
     }
 }
@@ -177,22 +171,20 @@ MapNode<Key, Value>* BSTree<Key, Value>::minNode(MapNode<Key, Value>* node) cons
     }
     return node;
 }
-
 template <typename Key, typename Value>
 MapNode<Key, Value>* BSTree<Key, Value>::successor(MapNode<Key, Value>* node) const
 {
-    MapNode<Key, Value>* successorNode;
     if (node->right) {
-        return minNode(node->right)
-    } 
-    successorNode = x->parent;
-    while (successorNode and (node == successorNode->right)) {
+        return minNode(node->right);
+    }
+
+    MapNode<Key, Value>* successorNode = node->parent;
+    while (successorNode && node == successorNode->right) {
         node = successorNode;
         successorNode = successorNode->parent;
     }
     return successorNode;
 }
-
 template <typename Key, typename Value>
 MapNode<Key, Value>* BSTree<Key, Value>::predecessor(MapNode<Key, Value>* node) const
 {

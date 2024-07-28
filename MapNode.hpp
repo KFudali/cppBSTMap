@@ -12,5 +12,5 @@ struct MapNode {
     MapNode* right;
     MapNode* parent;
 
-    MapNode(const Key& key, const Value& value) : key(key), value(value), red(false), left(nullptr), right(nullptr), parent(nullptr) {}
+    MapNode(const std::pair<Key, Value>& pair) : key(pair.first), value(pair.second), red(false), left(nullptr), right(nullptr), parent(nullptr) {}
 };
