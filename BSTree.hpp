@@ -42,6 +42,8 @@ public:
     Value& operator[](const Key& key);
 
     inline size_t size() const { return mapSize; };
+    
+    https://internalpointers.com/post/writing-custom-iterators-modern-cpp
 
     struct iterator {
         using iterator_category = std::bidirectional_iterator_tag;
