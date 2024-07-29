@@ -3,7 +3,7 @@
 template <typename Key, typename Value>
 struct MapNode {
 
-    Key key;
+    const Key key;
     Value value;
 
     bool red;

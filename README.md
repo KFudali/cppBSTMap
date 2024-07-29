@@ -8,3 +8,5 @@ Written mainly by me with some ai help for debugging.
 
 For iterators i used information provided here:
 https://internalpointers.com/post/writing-custom-iterators-modern-cpp
+and given in great talk "Back to Basics: Designing Classes (part 2 of 2)" by Klaus Iglberger at CppCon 2021
+https://youtu.be/O65lEiYkkbc?si=d5mmcYcY6c_2-7b5

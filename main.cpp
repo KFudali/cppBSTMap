@@ -4,6 +4,7 @@
 #include "Benchmark.hpp"
 #include "RandData.hpp"
 
+#include <algorithm>
 #include <iostream>
 #include <map>
 #include <string>
@@ -26,7 +27,11 @@ int main(int argc, char *argv[]){
         int value = RandData::randInt(1, setSize);
         dataSet[i] = {key, value};
         keysSet[i] = key;
+        RBTreeMap.insert(dataSet[i]);
     }
+    // Algorithm test
+    // std::for_each(RBTreeMap.begin(), RBTreeMap.end(), 
+    //     [](const auto& elem){std::cout << elem.first << " : " << elem.second << std::endl;});
 
     std::cout << "VecMap - ";
     benchmarkInsert(vecMap, dataSet);
@@ -58,14 +63,12 @@ int main(int argc, char *argv[]){
         std::cerr << "Caught a runtime error: " << e.what() << '\n';
     }
 
-
     std::cout << "RBTreeMap - ";
     try {
         benchmarkSearch(RBTreeMap, keysSet); 
     } catch (const std::runtime_error& e) {
         std::cerr << "Caught a runtime error: " << e.what() << '\n';
     }
-    
 
     return 0;
 }

@@ -9,11 +9,15 @@
 template <typename Key, typename Value>
 class BSTree 
 {
-    MapNode<Key, Value>* minNode (MapNode<Key, Value>* node) const;
-    MapNode<Key, Value>* maxNode (MapNode<Key, Value>* node) const;
+private:
+    friend class iterator;
+    friend class const_iterator;
 
-    MapNode<Key, Value>* successor (MapNode<Key, Value>* node) const;
-    MapNode<Key, Value>* predecessor (MapNode<Key, Value>* node) const;
+    MapNode<Key, Value>* minNode(MapNode<Key, Value>* node) const;
+    MapNode<Key, Value>* maxNode(MapNode<Key, Value>* node) const;
+
+    MapNode<Key, Value>* successor(MapNode<Key, Value>* node) const;
+    MapNode<Key, Value>* predecessor(MapNode<Key, Value>* node) const;
 
 protected:
     MapNode<Key, Value>* rootNode;
@@ -29,11 +33,10 @@ public:
     typedef Key key_type;
     typedef Value mapped_type;
 
-    BSTree() : mapSize(0), rootNode(nullptr) {};
+    BSTree() : mapSize(0), rootNode(nullptr) {}
     virtual ~BSTree();
-
     BSTree(const BSTree &) = delete;
-    BSTree operator=(const BSTree &) = delete;
+    BSTree& operator=(const BSTree &) = delete;
 
     virtual void erase(const Key& key);
     virtual void insert(const std::pair<Key, Value>& pair);
@@ -41,121 +44,83 @@ public:
     Value& at(const Key& key);
     Value& operator[](const Key& key);
 
-    inline size_t size() const { return mapSize; };
-    
-    https://internalpointers.com/post/writing-custom-iterators-modern-cpp
+    inline size_t size() const { return mapSize; }
 
+
+    // reference https://internalpointers.com/post/writing-custom-iterators-modern-cpp
     struct iterator {
         using iterator_category = std::bidirectional_iterator_tag;
-        using difference_type   = std::ptrdiff_t;
-        using value_type        = std::pair<const Key, Value>;
-        using pointer           = value_type*;
-        using reference         = value_type&;
+        using difference_type = std::ptrdiff_t;
+        using value_type = std::pair<const Key, Value>;
+        using pointer = value_type*;
+        using reference = value_type&;
 
-        pointer nodePtr;
+        MapNode<Key, Value>* nodePtr;
+        BSTree<Key, Value>* tree;
 
-        iterator(MapNode<Key, Value>* node = nullptr) : nodePtr(node) {};
+        iterator(MapNode<Key, Value>* node = nullptr, BSTree<Key, Value>* tree = nullptr)
+            : nodePtr(node), tree(tree) {}
 
-        reference operator*() const { return nodePtr->data; }
-        pointer operator->() const { nodePtr }
-        bool operator==(const iterator& other) const {return nodePtr == other.nodePtr;}
-        bool operator!=(const iterator& other) const {return nodePtr != other.nodePtr;}
+        reference operator*() const { 
+            std::pair<const Key, Value> data(nodePtr->key, nodePtr->value);
+            return data;
+        }
+        pointer operator->() const { 
+            std::pair<const Key, Value> data(nodePtr->key, nodePtr->value);
+            return &data;
+        }
+
+        bool operator==(const iterator& other) const { return nodePtr == other.nodePtr; }
+        bool operator!=(const iterator& other) const { return nodePtr != other.nodePtr; }
 
         iterator& operator++() {
-            nodePtr = BSTree<Key, Value>::successor(nodePtr);
+            nodePtr = tree->successor(nodePtr);
             return *this;
         }
         iterator operator++(int) {
             iterator copy = *this;
-            nodePtr = BSTree<Key, Value>::successor(nodePtr);
+            nodePtr = tree->successor(nodePtr);
             return copy;
         }
 
         iterator& operator--() {
-            nodePtr = BSTree<Key, Value>::predecessor(nodePtr);
+            nodePtr = tree->predecessor(nodePtr);
             return *this;
         }
         iterator operator--(int) {
             iterator copy = *this;
-            nodePtr = BSTree<Key, Value>::predecessor(nodePtr);
-            return copy;
-        }
-    };
-    // const correctness iterator https://www.youtube.com/watch?v=O65lEiYkkbc by Klaus Iglberger timestamp: 42:10
-    struct const_iterator {
-        using iterator_category = std::bidirectional_iterator_tag;
-        using difference_type   = std::ptrdiff_t;
-        using value_type        = std::pair<const Key, Value>;
-        using pointer           = const value_type*;
-        using reference         = const value_type&;
-
-        const MapNode<Key, Value>* nodePtr;
-
-        const_iterator(const MapNode<Key, Value>* node = nullptr) : nodePtr(node) {}
-
-        reference operator*() const { 
-            return nodePtr->data; 
-        }
-
-        pointer operator->() const { 
-            return &(nodePtr->data); 
-        }
-
-        bool operator==(const const_iterator& other) const {
-            return nodePtr == other.nodePtr;
-        }
-
-        bool operator!=(const const_iterator& other) const {
-            return nodePtr != other.nodePtr;
-        }
-
-        const_iterator& operator++() {
-            nodePtr = BSTree<Key, Value>::successor(nodePtr);
-            return *this;
-        }
-
-        const_iterator operator++(int) {
-            const_iterator copy = *this;
-            nodePtr = BSTree<Key, Value>::successor(nodePtr);
-            return copy;
-        }
-
-        const_iterator& operator--() {
-            nodePtr = BSTree<Key, Value>::predecessor(nodePtr);
-            return *this;
-        }
-
-        const_iterator operator--(int) {
-            const_iterator copy = *this;
-            nodePtr = BSTree<Key, Value>::predecessor(nodePtr);
+            nodePtr = tree->predecessor(nodePtr);
             return copy;
         }
     };
 
+    // const corectness - https://youtu.be/O65lEiYkkbc?si=n5k0xBKtfo4R-qdl timestamp: 42:10 
+    // Back to Basics: Designing Classes (part 2 of 2) - Klaus Iglberger - CppCon 2021
 
-    iterator node begin(return iterator(minNode(rootNode)));
-    iterator node end(return iterator(nullptr));
+    using const_iterator = const iterator;
+
+    iterator begin() noexcept {return iterator(minNode(rootNode), this);}
+    iterator end()   noexcept {return iterator(nullptr, this);}
+    iterator rbegin() noexcept {return iterator(maxNode(rootNode), this);}
+    iterator rend() noexcept {return iterator(nullptr, this);}
+
+    const_iterator begin() const noexcept {return iterator(minNode(rootNode), this);}
+    const_iterator end()   const noexcept {return iterator(nullptr, this);}
     
-    const_iterator begin() const noexcept {return const_iterator(minNode(rootNode));}
-    const_iterator end() const noexcept {return const_iterator(nullptr);}
-    const_iterator cbegin() const noexcept {return const_iterator(minNode(rootNode));}
-    const_iterator cend() const noexcept {return const_iterator(nullptr);}
+    const_iterator rbegin() const noexcept {return iterator(maxNode(rootNode), this);}
+    const_iterator rend() const noexcept {return iterator(nullptr, this);}
+
+    const_iterator cbegin() const noexcept {return iterator(minNode(rootNode), this);}
+    const_iterator cend()   const noexcept {return iterator(nullptr, this);}
 };
 
-
-
 template <typename Key, typename Value>
-BSTree<Key, Value>::~BSTree(){
-    std::vector<MapNode<Key, Value>*> nodes;
-    if (rootNode) nodes.push_back(rootNode);
-
-    while (!nodes.empty()) {
-        MapNode<Key, Value>* node = nodes.back();
-        nodes.pop_back();
-        if (node->left) nodes.push_back(node->left);
-        if (node->right) nodes.push_back(node->right);
-        delete node;
+BSTree<Key, Value>::~BSTree() {
+    for (auto it = rbegin(); it != rend(); ++it) {
+        delete it.nodePtr;
     }
+    rootNode = nullptr;
+    mapSize = 0;
 }
 
 template <typename Key, typename Value>
