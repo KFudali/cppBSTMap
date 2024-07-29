@@ -1,3 +1,4 @@
+#include "RBTree.hpp"
 #include "BSTree.hpp"
 #include "VecMap.hpp"
 #include "Benchmark.hpp"
@@ -9,6 +10,7 @@
 
 int main(int argc, char *argv[]){
     
+    RBTree<int, int> RBTreeMap;
     BSTree<int, int> BSTreeMap;
     VecMap<int, int> vecMap;
     std::map<int, int> map;
@@ -20,11 +22,10 @@ int main(int argc, char *argv[]){
     RandData::init();
 
     for (int i = 0; i < setSize; ++i) {
-        int key   = RandData::randInt(1,setSize);
+        int key   = i;
         int value = RandData::randInt(1, setSize);
         dataSet[i] = {key, value};
         keysSet[i] = key;
-
     }
 
     std::cout << "VecMap - ";
@@ -33,6 +34,8 @@ int main(int argc, char *argv[]){
     benchmarkInsert(BSTreeMap, dataSet);
     std::cout << "std::map - ";
     benchmarkInsert(map, dataSet);
+    std::cout << "RBTree - ";
+    benchmarkInsert(RBTreeMap, dataSet);
 
     std::cout << "VecMap - ";
     try {
@@ -54,6 +57,15 @@ int main(int argc, char *argv[]){
     } catch (const std::runtime_error& e) {
         std::cerr << "Caught a runtime error: " << e.what() << '\n';
     }
+
+
+    std::cout << "RBTreeMap - ";
+    try {
+        benchmarkSearch(RBTreeMap, keysSet); 
+    } catch (const std::runtime_error& e) {
+        std::cerr << "Caught a runtime error: " << e.what() << '\n';
+    }
+    
 
     return 0;
 }
