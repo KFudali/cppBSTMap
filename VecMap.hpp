@@ -6,7 +6,10 @@
 template<typename Key, typename Value>
 class VecMap {
 
+    private:
+
     std::vector<std::pair<Key, Value>> pairs;
+    
     public:
     
     typedef Key key_type;

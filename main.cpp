@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
     RandData::init();
 
     for (int i = 0; i < setSize; ++i) {
-        int key   = i;
+        int key   = RandData::randInt(1, setSize);
         int value = RandData::randInt(1, setSize);
         dataSet[i] = {key, value};
         keysSet[i] = key;
