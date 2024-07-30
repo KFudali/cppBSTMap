@@ -8,67 +8,71 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <chrono>
+#include <fstream>
 
-int main(int argc, char *argv[]){
-    
-    RBTree<int, int> RBTreeMap;
-    BSTree<int, int> BSTreeMap;
+int main(int argc, char *argv[]) {
+
     VecMap<int, int> vecMap;
-    std::map<int, int> map;
+    BSTree<int, int> BSTreeMap;
+    RBTree<int, int> RBTreeMap;
+    std::map<int, int> STDMap;
 
-    size_t setSize = 100000;
-    std::vector<int> keysSet(setSize);
-    std::vector<std::pair<int, int>> dataSet(setSize);
 
-    RandData::init();
+    std::vector<int> setSizes{5000, 10000, 50000, 100000, 500000, 1000000};
 
-    for (int i = 0; i < setSize; ++i) {
-        int key   = RandData::randInt(1, setSize);
-        int value = RandData::randInt(1, setSize);
-        dataSet[i] = {key, value};
-        keysSet[i] = key;
-        RBTreeMap.insert(dataSet[i]);
+    for (int setType = 0; setType < static_cast<int>(SetType::count); setType++)
+    {
+
+        SetType eSetType = static_cast<SetType>(setType);
+        std::ofstream resultsFile;
+        switch (eSetType) {
+            case SetType::linear:
+                resultsFile.open("results_linear.txt");
+                break;
+            case SetType::linearRev:
+                resultsFile.open("results_linearRev.txt");
+                break;
+            case SetType::rand:
+                resultsFile.open("results_rand.txt");
+                break;
+            default:
+                std::cerr << "Unknown set type!" << std::endl;
+                continue; // Skip the rest of the loop iteration
+        }
+
+        resultsFile << "quant\t\tsetSize\tvecMap\tBSTMap\tRBTMap\tstdMap\n";
+        for (const int setSize : setSizes) {
+        benchmarkResults vecResults = benchmarkMap(vecMap, setSize, eSetType);
+        benchmarkResults BSTResults = benchmarkMap(BSTreeMap, setSize, eSetType);
+        benchmarkResults RBTResults = benchmarkMap(RBTreeMap, setSize, eSetType);
+        benchmarkResults STDResults = benchmarkMap(STDMap, setSize, eSetType);
+        resultsFile << "insert-mean\t" << std::to_string(setSize) << "\t" 
+                                       << vecResults.insertMean   << "\t"  
+                                       << BSTResults.insertMean   << "\t"
+                                       << RBTResults.insertMean   << "\t"
+                                       << STDResults.insertMean   << std::endl;
+
+        resultsFile << "search-mean\t" << std::to_string(setSize) << "\t" 
+                                       << vecResults.searchMean   << "\t"
+                                       << BSTResults.searchMean   << "\t"
+                                       << RBTResults.searchMean   << "\t"
+                                       << STDResults.searchMean   << std::endl;
+
+        resultsFile << "insert-sDev\t" << std::to_string(setSize) << "\t" 
+                                         << vecResults.insertStdDev << "\t"
+                                         << BSTResults.insertStdDev << "\t"
+                                         << RBTResults.insertStdDev << "\t"
+                                         << STDResults.insertStdDev << std::endl;
+
+        resultsFile << "search-sDev\t" << std::to_string(setSize) << "\t" 
+                                         << vecResults.searchStdDev << "\t"
+                                         << BSTResults.searchStdDev << "\t"
+                                         << RBTResults.searchStdDev << "\t"
+                                         << STDResults.searchStdDev << std::endl;
+
     }
-    // Algorithm test
-    // std::for_each(RBTreeMap.begin(), RBTreeMap.end(), 
-    //     [](const auto& elem){std::cout << elem.first << " : " << elem.second << std::endl;});
-
-    std::cout << "VecMap - ";
-    benchmarkInsert(vecMap, dataSet);
-    std::cout << "BSTreeMap - ";
-    benchmarkInsert(BSTreeMap, dataSet);
-    std::cout << "std::map - ";
-    benchmarkInsert(map, dataSet);
-    std::cout << "RBTree - ";
-    benchmarkInsert(RBTreeMap, dataSet);
-
-    std::cout << "VecMap - ";
-    try {
-        benchmarkSearch(vecMap, keysSet); 
-    } catch (const std::runtime_error& e) {
-        std::cerr << "Caught a runtime error: " << e.what() << '\n';
+    resultsFile.close();
     }
-    
-    std::cout << "BSTreeMap - ";
-    try {
-        benchmarkSearch(BSTreeMap, keysSet); 
-    } catch (const std::runtime_error& e) {
-        std::cerr << "Caught a runtime error: " << e.what() << '\n';
-    }
-
-    std::cout << "std::map - ";
-    try {
-        benchmarkSearch(map, keysSet); 
-    } catch (const std::runtime_error& e) {
-        std::cerr << "Caught a runtime error: " << e.what() << '\n';
-    }
-
-    std::cout << "RBTreeMap - ";
-    try {
-        benchmarkSearch(RBTreeMap, keysSet); 
-    } catch (const std::runtime_error& e) {
-        std::cerr << "Caught a runtime error: " << e.what() << '\n';
-    }
-
     return 0;
 }
