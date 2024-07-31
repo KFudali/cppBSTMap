@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     std::map<int, int> STDMap;
 
 
-    std::vector<int> setSizes{5000, 10000, 50000, 100000, 500000, 1000000};
+    std::vector<int> setSizes{1000, 5000, 10000, 20000, 30000, 40000, 50000};
 
     for (int setType = 0; setType < static_cast<int>(SetType::count); setType++)
     {
