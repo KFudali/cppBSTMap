@@ -1,4 +1,4 @@
-quant		setSize	vecMap	BSTMap	RBTMap	stdMap
+quant	setSize	vecMap	BSTMap	RBTMap	stdMap
 insert-mean	1000	155	1029	49	17
 search-mean	1000	156	976	18	16
 insert-sDev	1000	10	182	11	11

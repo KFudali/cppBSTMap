@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
                 continue; // Skip the rest of the loop iteration
         }
 
-        resultsFile << "quant\t\tsetSize\tvecMap\tBSTMap\tRBTMap\tstdMap\n";
+        resultsFile << "quant\tsetSize\tvecMap\tBSTMap\tRBTMap\tstdMap\n";
         for (const int setSize : setSizes) {
         benchmarkResults vecResults = benchmarkMap(vecMap, setSize, eSetType);
         benchmarkResults BSTResults = benchmarkMap(BSTreeMap, setSize, eSetType);
