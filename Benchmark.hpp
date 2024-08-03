@@ -73,6 +73,8 @@ benchmarkResults benchmarkMap(MapType& map, int setSize, SetType setType)
     std::vector<long long> insertDurations(nSamples);
     std::vector<long long> searchDurations(nSamples);
 
+    MapType map;
+
     for (int i = 0; i < nSamples; i++){
         insertDurations[i] = benchmarkInsert(map, dataSet);
         searchDurations[i] = benchmarkSearch(map, keysSet);
